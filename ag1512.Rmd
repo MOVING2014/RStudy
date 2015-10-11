@@ -1,0 +1,30 @@
+---
+title: "ag1512"
+output: html_document
+---
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+source("Read.data.R")
+allinone(dates = "20150901",spe = "ag1512",location = "sc")
+allinone(dates = "20150902",spe = "ag1512",location = "sc")
+allinone(dates = "20150907",spe = "ag1512",location = "sc")
+allinone(dates = "20150908",spe = "ag1512",location = "sc")
+allinone(dates = "20150909",spe = "ag1512",location = "sc")
+allinone(dates = "20150910",spe = "ag1512",location = "sc")
+allinone(dates = "20150911",spe = "ag1512",location = "sc")
+allinone(dates = "20150914",spe = "ag1512",location = "sc")
+allinone(dates = "20150915",spe = "ag1512",location = "sc")
+allinone(dates = "20150916",spe = "ag1512",location = "sc")
+allinone(dates = "20150917",spe = "ag1512",location = "sc")
+allinone(dates = "20150918",spe = "ag1512",location = "sc")
+allinone(dates = "20150921",spe = "ag1512",location = "sc")
+allinone(dates = "20150922",spe = "ag1512",location = "sc")
+allinone(dates = "20150923",spe = "ag1512",location = "sc")
+allinone(dates = "20150924",spe = "ag1512",location = "sc")
+allinone(dates = "20150925",spe = "ag1512",location = "sc")
+allinone(dates = "20150928",spe = "ag1512",location = "sc")
+allinone(dates = "20150929",spe = "ag1512",location = "sc")
+allinone(dates = "20150930",spe = "ag1512",location = "sc")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -3,7 +3,7 @@ title: "TA601"
 output: html_document
 ---
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
 source("Read.data.R")
 allinone(dates = "20150901",spe = "TA601",location = "zc")
 allinone(dates = "20150902",spe = "TA601",location = "zc")

@@ -26,6 +26,9 @@ plottrends <- function(a){
     geom_bar()+theme_gray(base_family = "STXihei")+labs(title =paste(titles,date))
   p2<-ggplot(data=a,aes_string(x="(1:length(最新))",y="最新"))+
     geom_point()+theme_gray(base_family = "STXihei")+labs(title=paste("buy ratio",mm))
+  
+  
+  
   multiplot(p1,p2)
   }
 
@@ -33,6 +36,20 @@ allinone <- function(dates="20150901",spe="m1601",location="dc")
 {
   an <- read.data(dates,spe,location)
   plottrends(an)
+  plotbox(an)
   summary.dir(an)
 }
-#allinone(dates = "20150901",spe = "TA601",location = "zc")
+
+plotbox <- function(a1){
+  
+  a1$hour <- substr(a1$时间,9,13)
+  a1<-a1[substr(a1$hour,4,5) %in% c("09","10","11","13","14","21","22","23"),]
+  cc<-diff(range(a1$最新/30))
+  p <- ggplot(data=a1,aes_string(x="最新"))+geom_bar(aes_string(fill="factor(成交类型)"),position = "dodge")+
+    coord_flip()+facet_wrap(~hour,nrow =1)+
+    geom_point(data=a1[1,],aes_string(y="0",x="最新"),colour="red",size=5)+
+    geom_point(data=a1[nrow(a1),],aes_string(y="0",x="最新"),colour="blue",size=5)+
+    theme_gray(base_family = "STXihei")
+  multiplot(p)
+}
+#allinone(dates = "20150902",spe = "TA601",location = "zc")

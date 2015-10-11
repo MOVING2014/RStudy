@@ -5,26 +5,7 @@ output: html_document
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE}
 source("Read.data.R")
-allinone(dates = "20150901",spe = "TA601",location = "zc")
-allinone(dates = "20150902",spe = "TA601",location = "zc")
-allinone(dates = "20150907",spe = "TA601",location = "zc")
-allinone(dates = "20150908",spe = "TA601",location = "zc")
-allinone(dates = "20150909",spe = "TA601",location = "zc")
-allinone(dates = "20150910",spe = "TA601",location = "zc")
-allinone(dates = "20150911",spe = "TA601",location = "zc")
-allinone(dates = "20150914",spe = "TA601",location = "zc")
-allinone(dates = "20150915",spe = "TA601",location = "zc")
-allinone(dates = "20150916",spe = "TA601",location = "zc")
-allinone(dates = "20150917",spe = "TA601",location = "zc")
-allinone(dates = "20150918",spe = "TA601",location = "zc")
-allinone(dates = "20150921",spe = "TA601",location = "zc")
-allinone(dates = "20150922",spe = "TA601",location = "zc")
-allinone(dates = "20150923",spe = "TA601",location = "zc")
-allinone(dates = "20150924",spe = "TA601",location = "zc")
-allinone(dates = "20150925",spe = "TA601",location = "zc")
-allinone(dates = "20150928",spe = "TA601",location = "zc")
-allinone(dates = "20150929",spe = "TA601",location = "zc")
-allinone(dates = "20150930",spe = "TA601",location = "zc")
+allinonefor(spe="TA601",location="zc",dates="201509")
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

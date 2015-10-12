@@ -28,8 +28,8 @@ plottrends <- function(a,bb=1000,cc=1000){
   
   p2<-ggplot(data=a,aes_string(x="index",y="最新"))+
     geom_point()+theme_gray(base_family = "STXihei")+labs(title=paste("buy ratio",mm))+
-    geom_point(data=a_kc,aes_string(x="index",y="最新"),colour="red",size=5,alpha=0.5)+
-    geom_point(data=a_pc,aes_string(x="index",y="最新"),colour="blue",size=5,alpha=0.5)
+    geom_point(data=a_kc,aes_string(x="index",y="最新",colour="方向"),size=5,alpha=0.5)+
+    geom_point(data=a_pc,aes_string(x="index",y="最新",colour="方向",fill="方向"),shape=2,size=5)
   
   multiplot(p1,p2)
   }

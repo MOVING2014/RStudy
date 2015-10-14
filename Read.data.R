@@ -15,23 +15,25 @@ summary.dir <- function(a){
   names(x)<-c("B","S","buy ratio")
   x
 }
-plottrends <- function(a,bb=1000,cc=1000){ 
+plottrends <- function(a,bb=500,cc=500){ 
   titles<- a$合约代码[1]
   date <- a$时间
   mm<-summary.dir(a)[3]
   mm<-paste(mm)
   a$index<-c(1:nrow(a))
-  a_kc<-a[a$开仓>bb,]
-  a_pc<-a[a$平仓>cc,]
+  a_kc<-a[a$开仓>quantile(a$开仓,0.999),]
+  a_pc<-a[a$平仓>quantile(a$平仓,0.999),]
   p1<-ggplot(data=a,aes_string(x="成交类型",fill="成交类型"))+
     geom_bar()+theme_gray(base_family = "STXihei")+labs(title =paste(titles,date))
   
   p2<-ggplot(data=a,aes_string(x="index",y="最新"))+
     geom_point()+theme_gray(base_family = "STXihei")+labs(title=paste("buy ratio",mm))+
-    geom_point(data=a_kc,aes_string(x="index",y="最新",colour="方向"),size=5,alpha=0.5)+
+    geom_point(data=a_kc,aes_string(x="index",y="最新",colour="方向"),size=5,alpha=0.5)+facet_wrap(~方向)+
     geom_point(data=a_pc,aes_string(x="index",y="最新",colour="方向",fill="方向"),shape=2,size=5)
   
   multiplot(p1,p2)
+  print(a_kc[,c("时间","方向","开仓")])
+  print(a_pc[,c("时间","方向","平仓")])
   }
 
 allinone <- function(dates="20150901",spe="m1601",location="dc")
@@ -43,6 +45,12 @@ allinone <- function(dates="20150901",spe="m1601",location="dc")
   an$hour <- substr(an$时间,9,13)
   an<-an[substr(an$hour,4,5) %in% c("09","10","11","13","14","21","22","23"),]
   print(summary(an))
+}
+
+allinonetrends <- function(dates="20150901",spe="m1601",location="dc")
+{
+  an <- read.data(dates,spe,location)
+  plotalltrends(an)
 }
 
 plotbox <- function(a1){
@@ -100,3 +108,36 @@ for (i in y) {
   allinone(dates = i,spe = spe,location = location )
 }
 }
+
+allinonefortrends <- function(spe="m1601",location="dc",dates="201509"){
+  y <- getdate(dates)
+  for (i in y) {
+    allinonetrends(dates = i,spe = spe,location = location )
+  }
+}
+
+
+
+plotalltrends <- function(a){ 
+  titles<- a$合约代码[1]
+  date <- a$时间
+  mm<-summary.dir(a)[3]
+  mm<-substr(paste(mm),1,4)
+  mm2<-mean(a$增仓)
+  a$index<-c(1:nrow(a))
+  x0 <- a[substr(a$时间,12,19)=="09:00:00",]$index[1]
+  a_kc<-a[a$开仓>quantile(a$开仓,0.999),]
+  a_pc<-a[a$平仓>quantile(a$平仓,0.999),]
+  a_kcp <- a_kc[order(a_kc$开仓,decreasing = TRUE),][1:2,]
+  a_pcp <- a_pc[order(a_pc$开仓,decreasing = TRUE),][1:2,]
+  p2<-ggplot(data=a,aes_string(x="index",y="最新"))+
+    geom_point()+theme_gray(base_family = "STXihei")+labs(title=paste("buy ratio",mm,"||增仓：",substr(mm2,1,4)))+geom_vline(xintercept=x0)+
+    geom_point(data=a_kc,aes_string(x="index",y="最新",colour="方向"),size=5,alpha=0.5)+facet_wrap(~方向,ncol=1)+
+    geom_point(data=a_pc,aes_string(x="index",y="最新",colour="方向",fill="方向"),shape=2,size=5)+
+    geom_text(data = a_kcp,aes_string(x="index",y="最新+5",label="开仓"),colour="red")+
+    geom_text(data = a_pcp,aes_string(x="index",y="最新+10",label="平仓"),colour="blue")
+
+    
+  multiplot(p2)
+}
+

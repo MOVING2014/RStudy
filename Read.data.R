@@ -1,11 +1,16 @@
 require("ggplot2")
+require("reshape2")
+require("plyr")
 source("multplot.R")
 read.data <- function(dates="20150907",spe="m1601",location="dc"){
   file_name <-"/Users/moving/Documents/期货交易/201509/"
   file_name <-paste0(file_name,location,"/")
   file_name <- paste0(file_name,dates,"/",spe,"_",dates,".csv")
   a<-read.csv(file=file_name,fileEncoding = "GBK")
-  a[a$成交额!=0,]
+  a$hour<-substr(a$时间,12,13)
+  a<-a[a$成交额!=0,]
+  a$index<-(1:nrow(a))
+  a
   
 }
 
@@ -23,6 +28,11 @@ plottrends <- function(a,bb=500,cc=500){
   a$index<-c(1:nrow(a))
   a_kc<-a[a$开仓>quantile(a$开仓,0.999),]
   a_pc<-a[a$平仓>quantile(a$平仓,0.999),]
+  print("开仓")
+  print(tapply(a_kc$开仓,a_kc$方向,sum))
+  print("平仓")
+  print(tapply(a_pc$平仓,a_pc$方向,sum))
+  
   p1<-ggplot(data=a,aes_string(x="成交类型",fill="成交类型"))+
     geom_bar()+theme_gray(base_family = "STXihei")+labs(title =paste(titles,date))
   
@@ -126,12 +136,26 @@ plotalltrends <- function(a){
   mm2<-mean(a$增仓)
   a$index<-c(1:nrow(a))
   x0 <- a[substr(a$时间,12,19)=="09:00:00",]$index[1]
+  z<-ddply(a,.(hour),summarise,minindex=min(index))
+  
   a_kc<-a[a$开仓>quantile(a$开仓,0.999),]
   a_pc<-a[a$平仓>quantile(a$平仓,0.999),]
+  print("开仓")
+  kc<-tapply(a_kc$开仓,a_kc$方向,sum)
+  kc["delta"] <- kc[1]-kc[2]
+  print(kc)
+  print("平仓")
+  pc<-tapply(a_pc$平仓,a_pc$方向,sum)
+  pc["delta"] <- pc[1]-pc[2]
+  print(pc)
+  value<-a$最新[nrow(a)]-a$最新[1]
+  print(c(value,value/(kc[3]+pc[3])*100))
+ 
   a_kcp <- a_kc[order(a_kc$开仓,decreasing = TRUE),][1:2,]
   a_pcp <- a_pc[order(a_pc$开仓,decreasing = TRUE),][1:2,]
   p2<-ggplot(data=a,aes_string(x="index",y="最新"))+
-    geom_point()+theme_gray(base_family = "STXihei")+labs(title=paste("buy ratio",mm,"||增仓：",substr(mm2,1,4)))+geom_vline(xintercept=x0)+
+    geom_point()+theme_gray(base_family = "STXihei")+labs(title=paste(substr(a$时间[1],1,10),"buy ratio",mm,"||增仓：",substr(mm2,1,4)))+
+    geom_vline(xintercept=z$minindex,colour="black")+geom_vline(xintercept=x0,colour="blue")+
     geom_point(data=a_kc,aes_string(x="index",y="最新",colour="方向"),size=5,alpha=0.5)+facet_wrap(~方向,ncol=1)+
     geom_point(data=a_pc,aes_string(x="index",y="最新",colour="方向",fill="方向"),shape=2,size=5)+
     geom_text(data = a_kcp,aes_string(x="index",y="最新+5",label="开仓"),colour="red")+
@@ -141,3 +165,10 @@ plotalltrends <- function(a){
   multiplot(p2)
 }
 
+ordersum_kc <- function(a){
+  sum(a$开仓[order(a$开仓,decreasing = TRUE)[1:5]])
+}
+
+ordersum_pc <- function(a){
+  sum(a$平仓[order(a$平仓,decreasing = TRUE)[1:5]])
+}

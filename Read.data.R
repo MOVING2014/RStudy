@@ -216,7 +216,7 @@ m<-merge(x1,z)
 m<-merge(m,x2)
 m$kc_delta<-m$ordersum_kc_B-m$ordersum_kc_S
 m$pc_delta<-m$ordersum_pc_B-m$ordersum_pc_S
-m$price_delta <- m$CLOSE-m$CLOSE
+m$price_delta <- m$CLOSE-m$OPEN
 m
 }
 

@@ -111,7 +111,28 @@ goodsdates <- c("20150901"
                 ,"20150929"
                 ,"20150930"
                 )
-m <- list("201509"=goodsdates)
+goodsdates10 <- c("20151008"
+                ,"20151009"
+                ,"20151012"
+                ,"20151013"
+                ,"20151014"
+                                  ,"20151015"
+                                  ,"20151016"
+                                  ,"20151019"
+                                  ,"20151020"
+                                  ,"20151021"
+                                  ,"20151022"
+                                  ,"20151023"
+                                  ,"20151026"
+                                  ,"20151027"
+                                  ,"20151028"
+                                  ,"20151029"
+                                  ,"20151030"
+                                  
+                                  
+)
+
+m <- list("201509"=goodsdates,"201510"=goodsdates10)
 m[[x]]
 }
 
@@ -142,8 +163,11 @@ plotalltrends <- function(a){
   z<-ddply(a,.(hour),summarise,minindex=min(index))
   zzz<-sum1(a)
   
-  a_kc<-a[a$开仓>quantile(a$开仓,0.999),]
-  a_pc<-a[a$平仓>quantile(a$平仓,0.999),]
+  #a_kc<-a[a$开仓>quantile(a$开仓,0.999),]
+  #a_pc<-a[a$平仓>quantile(a$平仓,0.999),]
+  a_kc <- markpoints_kc(a=a,n=1)
+  a_pc <- markpoints_pc(a=a,n=1)
+  
   print("开仓")
   kc<-tapply(a_kc$开仓,a_kc$方向,sum)
   kc["delta"] <- kc[1]-kc[2]
@@ -161,8 +185,9 @@ plotalltrends <- function(a){
   p2<-ggplot(data=a,aes_string(x="index",y="最新"))+
     geom_point()+theme_gray(base_family = "STXihei")+labs(title=paste(substr(last(a$时间),1,10),"buy ratio",mm,"||增仓：",substr(mm2,1,4)))+
     geom_vline(xintercept=zzz$minindex,colour="black")+geom_vline(xintercept=x0,colour="blue")+
-    geom_point(data=a_kc,aes_string(x="index",y="最新",colour="方向"),size=5,alpha=0.5)+facet_wrap(~方向,ncol=1)+
-    geom_point(data=a_pc,aes_string(x="index",y="最新",colour="方向",fill="方向"),shape=2,size=5)+
+    #geom_point(data=a_kc,aes_string(x="index",y="最新",colour="方向"),size=5,alpha=0.5)+facet_wrap(~方向,ncol=1)+
+    geom_point(data=a_kc,aes_string(x="index",y="最新",colour="方向",size="(abs(开仓)+1)"),alpha=0.5)+facet_wrap(~方向,ncol=1)+
+    geom_point(data=a_pc,aes_string(x="index",y="最新",colour="方向",fill="方向",size="(abs(平仓)+1)"),shape=2)+
     geom_text(data = a_kcp,aes_string(x="index",y="最新+5",label="开仓"),colour="red")+
     geom_text(data=zzz,aes_string(x="minindex",y=min_zx-20,label="hour"))+
     #geom_text(data=zzz,aes_string(x="minindex",y=min_zx-10,label="kc_delta"))+
@@ -181,6 +206,35 @@ plotalltrends <- function(a){
  # p1 <- ggplot(data=mm,aes_string(x="minindex",y="value",fill="variable"))+
  #   geom_bar(position = "dodge",stat="identity")
  # print(p1)
+}
+
+markpoints_kc <- function(a,n=1){
+
+  if(n==1){
+   b<-a[a$开仓>=quantile(a$开仓,0.999),]
+    }
+  if(n==2){
+    x1<-ddply(a,.(方向,hour),summarise,
+              kc=index[order(开仓,decreasing = TRUE)[1:5]],
+              pc=index[order(平仓,decreasing = TRUE)[1:5]])
+    x1<-x1[!is.na(x1$kc),]
+    b<-a[x1$kc,]
+    }
+   b
+}
+markpoints_pc <- function(a,n=1){
+  
+  if(n==1){
+  b<- a[a$平仓>quantile(a$平仓,0.999),]
+    }
+  if(n==2){
+    x1<-ddply(a,.(方向,hour),summarise,
+              kc=index[order(开仓,decreasing = TRUE)[1:5]],
+              pc=index[order(平仓,decreasing = TRUE)[1:5]])
+    x1<-x1[!is.na(x1$kc),]
+    b<-a[x1$pc,]
+    }
+  b
 }
 
 ordersum_kc <- function(a){
@@ -245,7 +299,10 @@ spes<- list(m1601=read.data.hist("m1601"),
             ag1512=read.data.hist("ag1512"),
             TA601=read.data.hist("TA601"),
             y1601=read.data.hist("Y1601"),
-            RM601=read.data.hist("RM601"))
+            RM601=read.data.hist("RM601"),
+            rb1601=read.data.hist("rb1601"),
+            l1601=read.data.hist("l1601")
+            )
 
 analyze <- function(a=m1601,minutes="5 min"){
   a$time <- cut(as.POSIXct(a$时间),minutes)
@@ -279,3 +336,11 @@ allinoneforcorrelation <- function(spe="m1601",location="dc",dates="201509",minu
   }
 }
 
+
+ordersum_kc_l <- function(a){
+  a$index[order(a$开仓,decreasing = TRUE)[1:5]]
+}
+
+ordersum_pc_l <- function(a){
+  a$index[order(a$平仓,decreasing = TRUE)[1:5]]
+}

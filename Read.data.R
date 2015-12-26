@@ -5,12 +5,14 @@ source("multplot.R")
 require("quantmod")
 
 read.data <- function(dates="20150907",spe="m1601",location="dc"){
-  file_name <-"/Users/moving/Documents/期货交易/201509/"
+  file_name <-"/Users/moving/Documents/期货交易/"
+  file_name <- paste0(file_name,substr(dates,1,6),"/")
   file_name <-paste0(file_name,location,"/")
   file_name <- paste0(file_name,dates,"/",spe,"_",dates,".csv")
   a<-read.csv(file=file_name,fileEncoding = "GBK")
   a$hour<-substr(a$时间,12,13)
   a<-a[a$成交额!=0,]
+  a<-a[a$最新 > 1000,]
   a$index<-(1:nrow(a))
   a
   
@@ -194,8 +196,15 @@ plotalltrends <- function(a){
     #geom_text(data=zzz,aes_string(x="minindex",y=min_zx-15,label="pc_delta"))+
     geom_text(data = a_pcp,aes_string(x="index",y="最新+10",label="平仓"),colour="blue")
 
-
+  px<-ggplot(data=a,aes_string(x="index",y="持仓"))+
+    geom_point()+theme_gray(base_family = "STXihei")+labs(title=paste(substr(last(a$时间),1,10),"buy ratio",mm,"||增仓：",substr(mm2,1,4)))+
+    geom_vline(xintercept=zzz$minindex,colour="black")+geom_vline(xintercept=x0,colour="blue")+
+    #geom_point(data=a_kc,aes_string(x="index",y="持仓",colour="方向"),size=5,alpha=0.5)+facet_wrap(~方向,ncol=1)+
+    geom_point(data=a_kc,aes_string(x="index",y="持仓",colour="方向",size="(abs(开仓)+1)"),alpha=0.5)+facet_wrap(~方向,ncol=1)+
+    geom_point(data=a_pc,aes_string(x="index",y="持仓",colour="方向",fill="方向",size="(abs(平仓)+1)"),shape=2)
   multiplot(p2)
+  multiplot(px)
+  
   print(sum1(a)[order(sum1(a)$minindex),c("hour","kc_delta","pc_delta","price_delta","OPEN","CLOSE","HIGH","LOW")])
   mmmm<-spes[[as.character(titles)]]
   mmmm
@@ -301,7 +310,8 @@ spes<- list(m1601=read.data.hist("m1601"),
             y1601=read.data.hist("Y1601"),
             RM601=read.data.hist("RM601"),
             rb1601=read.data.hist("rb1601"),
-            l1601=read.data.hist("l1601")
+            l1601=read.data.hist("l1601"),
+            a1601=read.data.hist("a1601")
             )
 
 analyze <- function(a=m1601,minutes="5 min"){

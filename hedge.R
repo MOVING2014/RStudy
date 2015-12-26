@@ -1,4 +1,4 @@
-
+require("ggplot2")
 read.data.index <- function(x="m9888",dates="2000"){
   m9888 <- read.csv(file = paste0("/Users/moving/Documents/期货交易/",x,".csv"),header = FALSE,stringsAsFactors = FALSE)
   names(m9888) <- c("Date","OPEN","HIGH","LOW","CLOSE","VOLUME","Holds")
@@ -27,13 +27,23 @@ c <- model$coefficients
 names(c)<- c("intercept","y9888","m9888")
 c
 
-plot(c["y9888"] *index.data0$y9888 +
-  c["m9888"]*index.data0$m9888-
-  index.data0$a9888)
 
-plot(c["y9888"] *log(index.data0$y9888) +
-       c["m9888"]*log(index.data0$m9888)-
-       log(index.data0$a9888))
+
+combinedIndexlog <- c["y9888"] *log(index.data0$y9888) +
+  c["m9888"]*log(index.data0$m9888)-
+  log(index.data0$a9888)
+
+combinedIndex <- c["y9888"] *(index.data0$y9888) +
+  c["m9888"]*(index.data0$m9888)-
+  (index.data0$a9888)
+
+
+p1<- qplot(combinedIndex)
+p2 <- qplot(x=index.data0$dates,y= combinedIndex)
+multiplot(p1,p2)
+
+
+
 
 
 

@@ -1,0 +1,12 @@
+---
+title: "Y1601"
+output: html_document
+---
+
+
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+source("Read.data.R")
+allinonefortrends(spe="Y1601",location="dc",dates="201509")
+```

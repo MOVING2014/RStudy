@@ -1,0 +1,11 @@
+---
+title: "boxplots"
+output: html_document
+---
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+source("Read.data.R")
+source("boxplots_day.R")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

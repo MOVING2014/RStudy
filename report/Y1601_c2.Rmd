@@ -1,0 +1,12 @@
+---
+title: "Y1601"
+output: html_document
+---
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+source("成交量对价格的影响.R")
+allinonefortrend_c2(spe="Y1601",location="dc",dates="201509")
+#allinonefor(spe="SR601",location="zc",dates="201509")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

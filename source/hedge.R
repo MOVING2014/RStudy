@@ -5,13 +5,6 @@ read.data.index <- function(x="m9888",dates="2000"){
   m9888[m9888$Date>dates,c("Date","CLOSE")]
 }
 
-a9888 <- read.data.index("a9888")
-y9888 <- read.data.index(x="y9888")
-m9888 <- read.data.index("m9888")
-
-
-product_list <-c("a9888","y9888","m9888")
-
 
 merge_data <- function(product_list=c("a9888","y9888","m9888")){
   m <- merge(x=get(product_list[1]),y=get(product_list[2]),by = c("Date"))
@@ -19,53 +12,78 @@ merge_data <- function(product_list=c("a9888","y9888","m9888")){
     m <- merge(m,get(product_list[i]),by = c("Date"))
   }
   names(m)<-c("dates",product_list)
+  m$dates <- as.POSIXct(m$dates)
   m
 }
 
-index.data <- m[,c("Date","CLOSE.x","CLOSE.y","CLOSE")]
-names(index.data)<- c("dates","a9888","m9888","y9888")
-index.data$dates <- as.POSIXct(index.data$dates)
+model_function <- function(x =datax,ind=index.data){
+  y <- ncol(x)
+  l <- list()
 
+  for(i in 1:y){
+    f <- paste0("ind$",x[1,i],"~ind$",x[2,i])  #生产方程表达式
+    if(nrow(x)>2){
+      for(j in 3:nrow(x)){
+        f <- paste0(f,"+ind$",x[j,i])
+      }
+      }
+    model<-lm(as.formula(f))
+    modelsummary<- summary(model)
+    l[[i]] <- c(x[,i],modelsummary$r.squared,model$coefficients[-1])
+  }
+  l
+}
+
+model_data3 <- function(index.data=index.data0,datax,i=1){
+  x <-model_function(ind = index.data,x = datax)
+  combinedIndex <- -1*index.data0[x[[i]][1]]  + 
+    index.data0[x[[i]][2]]*as.double(x[[i]][5]) + 
+    index.data0[x[[i]][3]] *as.double(x[[i]][6])
+  unlist(combinedIndex)
+}
+
+model_data2 <- function(index.data=index.data0,datax,i=1){
+  x <-model_function(ind = index.data,x = datax)
+  combinedIndex <- -1*index.data0[x[[i]][1]]  + 
+    index.data0[x[[i]][2]]*as.double(x[[i]][4]) 
+  unlist(combinedIndex)
+}
+
+
+get_index.data0 <- function(index.data,begin="2014-01-01",end="2016-01-01"){
 index.data0 <- index.data[index.data$dates>
-                            as.POSIXct("2014-01-01") & 
-                            index.data$dates<as.POSIXct("2016-01-01"),]
+                            as.POSIXct(begin) & 
+                            index.data$dates<as.POSIXct(end),]
+index.data0
 
-model<-lm(log(index.data0$a9888)~log(index.data0$y9888)+log(index.data0$m9888))
-
-summary(model)
-c <- model$coefficients
-names(c)<- c("intercept","y9888","m9888")
-c
+}
 
 
-library("psych")
-corr.test(index.data0[,-1])
-
+a9888 <- read.data.index("a9888")
+y9888 <- read.data.index(x="y9888")
+m9888 <- read.data.index("m9888")
+c9888 <- read.data.index("c9888")
+product_list <-c("a9888","y9888","m9888","c9888")
 
 
 
-combinedIndexlog <- c["y9888"] *log(index.data0$y9888) +
-  c["m9888"]*log(index.data0$m9888)-
-  log(index.data0$a9888)
+index.data <- merge_data(product_list = product_list)
 
-combinedIndex <- c["y9888"] *(index.data0$y9888) +
-  c["m9888"]*(index.data0$m9888)-
-  (index.data0$a9888)
+datax <- combn(product_list[1:length(product_list)], 3) 
+
+model_function(x = datax,ind = index.data0)
+
+index.data0 <- get_index.data0(index.data,begin = "2014-06-01", end = "2015-12-01")
+
+l<-model_function(x = datax,ind = index.data0)
+combinedIndex <- model_data2(index.data0,datax = datax,i=3)
 
 
 p1<- qplot(combinedIndex)
-p2 <- qplot(x=index.data0$dates,y= combinedIndex) + scale_x_datetime(date_breaks  = "1 month")+
+p2 <- qplot(x=index.data0$dates,y= combinedIndex) + 
+  scale_x_datetime(date_breaks  = "1 month")+
   theme(axis.text.x  = element_text(angle=90))
-
 multiplot(p1,p2)
-
-qplot(x=index.data0$dates,y= combinedIndex)
-
-
-
-qplot(x=index.data0$dates,y= combinedIndex) + scale_x_datetime(date_breaks = "2 weeks")
-
-
 
 
 

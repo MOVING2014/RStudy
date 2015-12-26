@@ -1,0 +1,12 @@
+---
+title: "SR601"
+output: html_document
+---
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+source("Read.data.R")
+allinonefortrends(spe="SR601",location="zc",dates="201510")
+#allinonefor(spe="SR601",location="zc",dates="201509")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

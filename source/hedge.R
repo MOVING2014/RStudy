@@ -95,12 +95,13 @@ TA888 <- read.data.index("TA888")
 l9888 <- read.data.index("l9888")
 p9888 <- read.data.index("p9888")
 v9888 <- read.data.index("v9888")
+rb888 <- read.data.index("rb888")
 
 product_list <-c("a9888","y9888"
                  ,"m9888","c9888"
                  ,"SR888","TA888"
                  ,"l9888","p9888"
-                 ,"v9888")
+                 ,"v9888","rb888")
 
 
 

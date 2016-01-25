@@ -84,3 +84,50 @@ get_index.data0 <- function(index.data,begin="2014-01-01",end="2016-01-01"){
   index.data0
   
 }
+
+
+f <- function(){
+  
+index.data0 <- get_index.data0(index.data,begin = "2000-01-01", end = "2016-01-01")
+fomulars <-"index.data$SR888* (-1) +index.data$l9888*(-0.5)+index.data$v9888"
+index.data$combinedIndex <- eval(parse(text=fomulars))
+y<-index.data$combinedIndex[index.data$dates %in% index.data0$dates]
+p1<- qplot(y)+
+  labs(title=paste0("",gsub("index.data\\$","",fomulars)))
+p2 <- qplot(x=index.data0$dates,y= y) + 
+  scale_x_datetime(date_breaks  = "3 month")+
+  theme(axis.text.x  = element_text(angle=90))
+multiplot(p1,p2)
+}
+#f()
+
+f1 <- function(fomulars ="index.data$SR888* (-1) +index.data$l9888*(-0.5)+index.data$v9888"){
+
+index.data0 <- get_index.data0(index.data,begin = "2000-01-01", end = "2016-01-01")
+#fomulars <-"index.data$SR888* (-1) +index.data$l9888*(-0.5)+index.data$v9888"
+index.data$combinedIndex <- eval(parse(text=fomulars))
+y<-index.data$combinedIndex[index.data$dates %in% index.data0$dates]
+
+
+lastPrice <- as.character(y[length(y)])
+p2 <- qplot(x=index.data0$dates,y= y) + 
+#qplot(x=index.data0$dates,y= y) + 
+  geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_hline(yintercept = max(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = min(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = as.integer(lastPrice),color="blue",alpha=0.6)+
+  scale_x_datetime(date_breaks  = "3 month")+
+  theme(axis.text.x  = element_text(angle=90))
+  
+
+p1 <- qplot(y)+
+#  qplot(y)+
+  labs(title=paste0("",gsub("index.data\\$","",fomulars)))+
+  geom_vline(xintercept = as.integer(lastPrice),color="red",alpha=0.6)
+
+multiplot(p1,p2)
+summary(y)
+}
+#f1(fomulars ="index.data$l9888*(-2)+index.data$v9888")
+

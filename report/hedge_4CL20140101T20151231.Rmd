@@ -1,0 +1,49 @@
+---
+title: "2CL20140101T20151231"
+output: html_document
+---
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+
+source("../hedgefunctions.R")
+source("../source/multplot.R")
+a9888 <- read.data.index("a9888")
+y9888 <- read.data.index(x="y9888")
+m9888 <- read.data.index("m9888")
+c9888 <- read.data.index("c9888")
+SR888 <- read.data.index("SR888")
+TA888 <- read.data.index("TA888")
+l9888 <- read.data.index("l9888")
+p9888 <- read.data.index("p9888")
+v9888 <- read.data.index("v9888")
+
+product_list <-c("a9888","y9888"
+                 ,"m9888","c9888"
+                 ,"SR888","TA888"
+                 ,"l9888","p9888"
+                 ,"v9888")
+index.data <- merge_data(product_list = product_list)
+
+datax <- combn(product_list[1:length(product_list)], 4)
+index.data0 <- get_index.data0(index.data,begin = "2014-01-01", end = "2015-12-31")
+l<-model_function(x = datax,ind = index.data0)
+
+
+
+l <- l[order(l$Rsqure,decreasing = TRUE),]
+for(i in 1:nrow(l)){ 
+
+index.data$combinedIndex <- eval(parse(text=l$formula[i]))
+y<-index.data$combinedIndex[index.data$dates %in% index.data0$dates]
+p1<- qplot(y)+
+  labs(title=paste0(substr(l$Rsqure[i],1,4),"|",gsub("index.data\\$","",l$formula[i])))
+p2 <- qplot(x=index.data0$dates,y= y) + 
+  scale_x_datetime(date_breaks  = "1 month")+
+  theme(axis.text.x  = element_text(angle=90))
+multiplot(p1,p2)
+
+}
+#allinonefor(spe="SR601",location="zc",dates="201509")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

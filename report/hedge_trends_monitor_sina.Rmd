@@ -7,23 +7,35 @@ output: html_document
 
 source("../hedgefunctions.R")
 source("../source/multplot.R")
+source("../datafromWeb.R")
 require("e1071")
-a9888 <- read.data.index("a9888")
-y9888 <- read.data.index(x="y9888")
-m9888 <- read.data.index("m9888")
-c9888 <- read.data.index("c9888")
-SR888 <- read.data.index("SR888")
-TA888 <- read.data.index("TA888")
-l9888 <- read.data.index("l9888")
-p9888 <- read.data.index("p9888")
-v9888 <- read.data.index("v9888")
+# a9888 <- read.data.index("a9888")
+# y9888 <- read.data.index(x="y9888")
+# m9888 <- read.data.index("m9888")
+# c9888 <- read.data.index("c9888")
+# SR888 <- read.data.index("SR888")
+# TA888 <- read.data.index("TA888")
+# l9888 <- read.data.index("l9888")
+# p9888 <- read.data.index("p9888")
+# v9888 <- read.data.index("v9888")
 
+
+a9888 <- read.data.index.sina("a0")
+y9888 <- read.data.index.sina(x="y0")
+m9888 <- read.data.index.sina("m0")
+c9888 <- read.data.index.sina("c0")
+SR888 <- read.data.index.sina("SR0")
+TA888 <- read.data.index.sina("TA0")
+l9888 <- read.data.index.sina("L0")
+p9888 <- read.data.index.sina("P0")
+v9888 <- read.data.index.sina("V0")
+RB0 <- read.data.index.sina("RB0")
 
 product_list <-c("a9888","y9888"
                  ,"m9888","c9888"
                  ,"SR888","TA888"
                  ,"l9888","p9888"
-                 ,"v9888")
+                 ,"v9888","RB0")
 index.data <- merge_data(product_list = product_list)
 
 
@@ -65,14 +77,13 @@ f1(fomulars ="index.data$y9888*(-2)+index.data$SR888+index.data$TA888")
 
 f1(fomulars ="index.data$SR888*(-1)+index.data$l9888*(-0.5)+index.data$v9888")
 f1(fomulars ="index.data$l9888*(-1)+index.data$v9888")
-f1(fomulars ="index.data$SR888*(-1)+index.data$v9888")
+
 f1(fomulars ="index.data$TA888*(-1)+index.data$p9888")
+f1(fomulars ="index.data$RB0*(-1)+index.data$p9888")
 f1(fomulars ="index.data$a9888*(-2)+index.data$y9888+index.data$m9888*2")
 
-f1(fomulars ="index.data$y9888*(-2)+index.data$p9888*(1)+index.data$SR888")
-
 f1(fomulars ="index.data$TA888*(-1)+index.data$p9888")
-f1(fomulars ="index.data$y9888*(-2)+index.data$SR888+index.data$TA888")
+
 f1(fomulars ="index.data$TA888*(-1)+index.data$p9888*(0.5)+index.data$v9888")
 
 

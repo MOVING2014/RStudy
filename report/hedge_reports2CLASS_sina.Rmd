@@ -1,0 +1,227 @@
+---
+title: "2CL"
+output: html_document
+---
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+
+source("../hedgefunctions.R")
+source("../source/multplot.R")
+source("../datafromWeb.R")
+a9888 <- read.data.index.sina("a0")
+y9888 <- read.data.index.sina(x="y0")
+m9888 <- read.data.index.sina("m0")
+c9888 <- read.data.index.sina("c0")
+SR888 <- read.data.index.sina("SR0")
+TA888 <- read.data.index.sina("TA0")
+l9888 <- read.data.index.sina("L0")
+p9888 <- read.data.index.sina("P0")
+v9888 <- read.data.index.sina("V0")
+AG0 <- read.data.index.sina("AG0")
+RB0 <- read.data.index.sina("RB0")
+CF0 <- read.data.index.sina("CF0")
+
+product_list <-c("a9888","y9888"
+                 ,"m9888","c9888"
+                 ,"SR888","TA888"
+                 ,"l9888","p9888"
+                 ,"v9888","AG0","RB0","CF0")
+index.data <- merge_data(product_list = product_list)
+
+datax <- combn(product_list[1:length(product_list)], 2)
+index.data0 <- get_index.data0(index.data,begin = "2014-01-01", end = "2015-12-31")
+l<-model_function(x = datax,ind = index.data0)
+
+l$period <- "20140101T20151231"
+cat("20140101T20151231")
+
+l <- l[order(l$Rsqure,decreasing = TRUE),]
+for(i in 1:nrow(l)){ 
+
+index.data$combinedIndex <- eval(parse(text=l$formula[i]))
+y<-index.data$combinedIndex[index.data$dates %in% index.data0$dates]
+lastPrice <- as.character(y[length(y)])
+p1<- qplot(y)+
+  labs(title=paste0(substr(l$Rsqure[i],1,4),"|",gsub("index.data\\$","",l$formula[i]))) +
+  geom_vline(xintercept = as.integer(lastPrice),color="red",alpha=0.6)
+
+p2 <- qplot(x=index.data0$dates,y= y) + 
+  
+  scale_x_datetime(date_breaks  = "1 month")+
+  theme(axis.text.x  = element_text(angle=90))+
+    geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_hline(yintercept = max(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = min(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = as.integer(lastPrice),color="blue",alpha=0.6)
+  
+multiplot(p1,p2)
+
+fn <- ecdf(y)
+#fn(lastPrice)
+z <- list(summaries=summary(y),pecentiles=fn(lastPrice))
+print(z)
+
+}
+
+write.csv(file = "/Users/moving/StaticsStudy/report/2class20160126.csv",l)
+
+
+index.data0 <- get_index.data0(index.data,begin = "2013-01-01", end = "2015-12-31")
+l<-model_function(x = datax,ind = index.data0)
+
+l$period <- "20130101T20151231"
+cat("20130101T20151231")
+
+l <- l[order(l$Rsqure,decreasing = TRUE),]
+for(i in 1:nrow(l)){ 
+
+index.data$combinedIndex <- eval(parse(text=l$formula[i]))
+y<-index.data$combinedIndex[index.data$dates %in% index.data0$dates]
+lastPrice <- as.character(y[length(y)])
+p1<- qplot(y)+
+  labs(title=paste0(substr(l$Rsqure[i],1,4),"|",gsub("index.data\\$","",l$formula[i]))) +
+  geom_vline(xintercept = as.integer(lastPrice),color="red",alpha=0.6)
+
+p2 <- qplot(x=index.data0$dates,y= y) + 
+  
+  scale_x_datetime(date_breaks  = "1 month")+
+  theme(axis.text.x  = element_text(angle=90))+
+    geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_hline(yintercept = max(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = min(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = as.integer(lastPrice),color="blue",alpha=0.6)
+multiplot(p1,p2)
+
+
+fn <- ecdf(y)
+#fn(lastPrice)
+z <- list(summaries=summary(y),pecentiles=fn(lastPrice))
+print(z)
+
+}
+
+
+write.table(l,file = "/Users/moving/StaticsStudy/report/2class20160126.csv",append = T,sep = ",",col.names = F)
+
+
+
+index.data0 <- get_index.data0(index.data,begin = "2012-01-01", end = "2015-12-31")
+l<-model_function(x = datax,ind = index.data0)
+
+l$period <- "20120101T20151231"
+cat("20120101T20151231")
+
+l <- l[order(l$Rsqure,decreasing = TRUE),]
+for(i in 1:nrow(l)){ 
+
+index.data$combinedIndex <- eval(parse(text=l$formula[i]))
+y<-index.data$combinedIndex[index.data$dates %in% index.data0$dates]
+lastPrice <- as.character(y[length(y)])
+p1<- qplot(y)+
+  labs(title=paste0(substr(l$Rsqure[i],1,4),"|",gsub("index.data\\$","",l$formula[i]))) +
+  geom_vline(xintercept = as.integer(lastPrice),color="red",alpha=0.6)
+
+p2 <- qplot(x=index.data0$dates,y= y) + 
+  
+  scale_x_datetime(date_breaks  = "3 month")+
+  theme(axis.text.x  = element_text(angle=90))+
+    geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_hline(yintercept = max(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = min(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = as.integer(lastPrice),color="blue",alpha=0.6)
+multiplot(p1,p2)
+
+
+fn <- ecdf(y)
+#fn(lastPrice)
+z <- list(summaries=summary(y),pecentiles=fn(lastPrice))
+print(z)
+
+}
+
+write.table(l,file = "/Users/moving/StaticsStudy/report/2class20160126.csv",append = T,sep = ",",col.names = F)
+
+
+index.data0 <- get_index.data0(index.data,begin = "2011-01-01", end = "2015-12-31")
+l<-model_function(x = datax,ind = index.data0)
+
+l$period <- "20110101T20151231"
+cat("20110101T20151231")
+
+l <- l[order(l$Rsqure,decreasing = TRUE),]
+for(i in 1:nrow(l)){ 
+
+index.data$combinedIndex <- eval(parse(text=l$formula[i]))
+y<-index.data$combinedIndex[index.data$dates %in% index.data0$dates]
+lastPrice <- as.character(y[length(y)])
+p1<- qplot(y)+
+  labs(title=paste0(substr(l$Rsqure[i],1,4),"|",gsub("index.data\\$","",l$formula[i]))) +
+  geom_vline(xintercept = as.integer(lastPrice),color="red",alpha=0.6)
+
+p2 <- qplot(x=index.data0$dates,y= y) + 
+  
+  scale_x_datetime(date_breaks  = "3 month")+
+  theme(axis.text.x  = element_text(angle=90))+
+    geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_hline(yintercept = max(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = min(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = as.integer(lastPrice),color="blue",alpha=0.6)
+multiplot(p1,p2)
+
+
+fn <- ecdf(y)
+#fn(lastPrice)
+z <- list(summaries=summary(y),pecentiles=fn(lastPrice))
+print(z)
+
+}
+
+
+write.table(l,file = "/Users/moving/StaticsStudy/report/2class20160126.csv",append = T,sep = ",",col.names = F)
+
+
+
+index.data0 <- get_index.data0(index.data,begin = "2010-01-01", end = "2015-12-31")
+l<-model_function(x = datax,ind = index.data0)
+
+l$period <- "20100101T20151231"
+cat("20100101T20151231")
+
+l <- l[order(l$Rsqure,decreasing = TRUE),]
+for(i in 1:nrow(l)){ 
+index.data$combinedIndex <- eval(parse(text=l$formula[i]))
+y<-index.data$combinedIndex[index.data$dates %in% index.data0$dates]
+lastPrice <- as.character(y[length(y)])
+p1<- qplot(y)+
+  labs(title=paste0(substr(l$Rsqure[i],1,4),"|",gsub("index.data\\$","",l$formula[i]))) +
+  geom_vline(xintercept = as.integer(lastPrice),color="red",alpha=0.6)
+
+p2 <- qplot(x=index.data0$dates,y= y) + 
+  
+  scale_x_datetime(date_breaks  = "3 month")+
+  theme(axis.text.x  = element_text(angle=90))+
+    geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_hline(yintercept = max(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = min(y),color="blue",alpha=0.7)+
+  geom_hline(yintercept = as.integer(lastPrice),color="blue",alpha=0.6)
+multiplot(p1,p2)
+
+
+fn <- ecdf(y)
+#fn(lastPrice)
+z <- list(summaries=summary(y),pecentiles=fn(lastPrice))
+print(z)
+
+}
+
+
+write.table(l,file = "/Users/moving/StaticsStudy/report/2class20160126.csv",append = T,sep = ",",col.names = F)
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

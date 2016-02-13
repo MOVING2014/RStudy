@@ -7,9 +7,9 @@ read.data.index <- function(x="m9888",dates="2000"){
 
 
 merge_data <- function(product_list=c("a9888","y9888","m9888")){
-  m <- merge(x=get(product_list[1]),y=get(product_list[2]),by = c("Date"))
+  m <- merge(x=get(product_list[1]),y=get(product_list[2]),by = c("Date"),all = TRUE)
   for (i in 3:length(product_list)) {
-    m <- merge(m,get(product_list[i]),by = c("Date"))
+    m <- merge(m,get(product_list[i]),by = c("Date"),all = TRUE)
   }
   names(m)<-c("dates",product_list)
   m$dates <- as.POSIXct(m$dates)

@@ -1,6 +1,8 @@
-library(rjson)
-library(RCurl)
+#library(rjson)
+#library(RCurl)
 #指数  TA0, Y0, 等等
+require("rjson")
+require("RCurl")
 
 readSinaData <- function(spe="Y0"){
   myHttpheader <- c(
@@ -13,14 +15,14 @@ readSinaData <- function(spe="Y0"){
   
 temp <- getURL(paste0("http://stock.finance.sina.com.cn/futures/api/json.php/InnerFuturesService.getInnerFuturesDailyKLine?symbol=",spe),
                httpheader=myHttpheader)
-temp<-gsub("date","\"date\"",temp)
-temp<-gsub("open","\"open\"",temp)
-temp<-gsub("high","\"high\"",temp)
-temp<-gsub("low","\"low\"",temp)
-temp<-gsub("close","\"close\"",temp)
-temp<-gsub("volume","\"volume\"",temp)
-x <- fromJSON(temp)
-xx<- data.frame()
+temp <- gsub("date","\"date\"",temp)
+temp <- gsub("open","\"open\"",temp)
+temp <- gsub("high","\"high\"",temp)
+temp <-gsub("low","\"low\"",temp)
+temp <- gsub("close","\"close\"",temp)
+temp <- gsub("volume","\"volume\"",temp)
+x = fromJSON(temp)
+xx <- data.frame()
 for(i in 1:length(x)){
   xx[i,1] <- as.integer(x[[i]]$open)
   xx[i,2] <- as.integer(x[[i]]$close)

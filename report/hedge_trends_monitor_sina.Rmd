@@ -76,16 +76,66 @@ l <- list(summaries=summary(y),pecentiles=fn(lastPrice))
 l
 
 }
+
+
+f2 <- function(fomulars ="index.data$SR888* (-1) +index.data$l9888*(-0.5)+index.data$v9888"){
+today <- format(Sys.Date(), "%Y-%m-%d")
+today_xdays <- format(Sys.Date()-90, "%Y-%m-%d")
+
+index.data0 <- get_index.data0(index.data,begin = today_xdays, end = today)
+
+#fomulars <-"index.data$SR888* (-1) +index.data$l9888*(-0.5)+index.data$v9888"
+index.data$combinedIndex <- eval(parse(text=fomulars))
+y<-index.data$combinedIndex[index.data$dates %in% index.data0$dates]
+
+mm <- cbind(index.data0$dates,y)
+mm <- mm[!is.na(mm[,2]),]
+y <- mm[,2]
+index.data0 <- index.data0[index.data0$dates %in% mm[,1],]
+
+lastPrice <- as.character(y[length(y)])
+p2 <- qplot(x=index.data0$dates,y= y) + 
+#qplot(x=index.data0$dates,y= y) + 
+  geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_point(aes(x=index.data0$dates[nrow(index.data0)],y=y[length(y)],color=lastPrice),size=4,alpha=0.6) +
+  geom_hline(yintercept = max(y,na.rm = TRUE),color="blue",alpha=0.7)+
+  geom_hline(yintercept = min(y,na.rm = TRUE),color="blue",alpha=0.7)+
+  geom_hline(yintercept = as.integer(lastPrice),color="blue",alpha=0.6)+
+  scale_x_datetime(date_breaks  = "3 days")+
+  theme(axis.text.x  = element_text(angle=90))
+  
+
+p1 <- qplot(y)+
+#  qplot(y)+
+  labs(title=paste0("",gsub("index.data\\$","",fomulars)))+
+  geom_vline(xintercept = as.integer(lastPrice),color="red",alpha=0.6)
+
+multiplot(p1,p2)
+fn <- ecdf(y)
+#fn(lastPrice)
+l <- list(summaries=summary(y),pecentiles=fn(lastPrice))
+l
+
+}
+
 f1(fomulars ="index.data$l9888*(-2)+index.data$v9888")
+f2(fomulars ="index.data$l9888*(-2)+index.data$v9888")
 f1(fomulars ="index.data$TA888*(-1)+index.data$p9888")
+f2(fomulars ="index.data$TA888*(-1)+index.data$p9888")
 f1(fomulars ="index.data$SR888*(-1)+index.data$l9888*(-0.5)+index.data$v9888")
+f2(fomulars ="index.data$SR888*(-1)+index.data$l9888*(-0.5)+index.data$v9888")
 
 #f1(fomulars ="index.data$l9888*(-1)+index.data$v9888*2+index.data$p9888*0.5")
 f1(fomulars ="index.data$y9888*(-2)+index.data$SR888+index.data$TA888")
+f2(fomulars ="index.data$y9888*(-2)+index.data$SR888+index.data$TA888")
 f1(fomulars ="index.data$l9888*(-1)+index.data$v9888")
+f2(fomulars ="index.data$l9888*(-1)+index.data$v9888")
 f1(fomulars ="index.data$RB0*(-1)+index.data$p9888")
+f2(fomulars ="index.data$RB0*(-1)+index.data$p9888")
 f1(fomulars ="index.data$a9888*(-2)+index.data$y9888+index.data$m9888*2")
+f2(fomulars ="index.data$a9888*(-2)+index.data$y9888+index.data$m9888*2")
 f1(fomulars ="index.data$TA888*(-1)+index.data$p9888*(0.5)+index.data$v9888")
+f2(fomulars ="index.data$TA888*(-1)+index.data$p9888*(0.5)+index.data$v9888")
 
 
 

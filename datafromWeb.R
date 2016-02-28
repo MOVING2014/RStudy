@@ -4,7 +4,12 @@
 require("rjson")
 require("RCurl")
 
-readSinaData <- function(spe="Y0"){
+readSinaData <- function(spe="y0"){
+  files <- paste0(spe,"_",Sys.Date(),".csv")
+  if(files%in%list.files("/tmp/")){
+    yy <- read.csv(file = paste0("/tmp/",spe,"_",Sys.Date(),".csv"))
+    return(yy)
+  }
   myHttpheader <- c(
     "User-Agent"="Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.1.6) ",
     "Accept"="text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -32,6 +37,7 @@ for(i in 1:length(x)){
   xx[i,6] <- x[[i]]$date
 }
 names(xx) <- c("OPEN","CLOSE","HIGH","LOW","VOLUME","Date")
+write.csv(xx,file = paste0("/tmp/",spe,"_",Sys.Date(),".csv"),row.names = FALSE)
 xx
 }
 
@@ -39,3 +45,4 @@ read.data.index.sina <- function(x="Y0",dates="2000"){
  m9888 <- readSinaData(x)
  m9888[m9888$Date>dates,c("Date","CLOSE")]
 }
+
